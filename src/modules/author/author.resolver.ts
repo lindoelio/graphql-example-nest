@@ -7,17 +7,17 @@ import { Post } from "../post/post.model";
 @Resolver(() => Author)
 export class AuthorResolver {
   constructor(
-    private readonly authorsService: AuthorService,
-    private readonly postsService: PostService,
+    private readonly authorService: AuthorService,
+    private readonly postService: PostService,
   ) {}
 
   @Query(() => Author)
   async findAll(): Promise<Author[]> {
-    return await this.authorsService.findAll();
+    return await this.authorService.findAll();
   }
 
-  @ResolveProperty()
+  @ResolveProperty(() => [Post])
   async getPosts(@Parent() author: Author): Promise<Post[]> {
-    return await this.postsService.findAll(author.id);
+    return await this.postService.findAll(author.id);
   }
 }
