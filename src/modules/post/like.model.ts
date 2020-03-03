@@ -1,11 +1,14 @@
-import { Field, ObjectType } from "type-graphql";
+import { Field, ObjectType, ID } from "type-graphql";
 
 @ObjectType()
-export class Like {
+export class LikeModel {
 
-  @Field()
+  @Field(() => ID, { nullable: true })
+  id: string;
+
+  @Field({ nullable: false })
   postId: string;
 
-  @Field()
+  @Field({ nullable: false })
   userId: string;
 }

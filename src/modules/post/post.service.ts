@@ -1,17 +1,17 @@
 import { Injectable } from "@nestjs/common";
-import { Post } from "./post.model";
-import { Like } from "./like.model";
+import { PostModel } from "./post.model";
+import { LikeModel } from "./like.model";
 
 @Injectable()
 export class PostService {
 
-  private readonly posts: Post[] = [];
+  private readonly posts: PostModel[] = [];
 
-  async create(post: Post): Promise<void> {
+  async create(post: PostModel): Promise<void> {
     this.posts.push(post);
   }
 
-  async findAll(authorId?: string): Promise<Post[]> {
+  async findAll(authorId?: string): Promise<PostModel[]> {
     if (authorId) {
       return this.posts.filter(post => post.id === authorId);
     }
@@ -20,7 +20,8 @@ export class PostService {
   }
 
   async addLike(postId: string, userId: string): Promise<void> {
-    const like: Like = {
+    const like: LikeModel = {
+      id: null,
       postId,
       userId
     };

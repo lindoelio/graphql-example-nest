@@ -3,30 +3,31 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
-type Author {
-  id: Int!
-  firstName: String
-  lastName: String
-  posts: [Post!]!
-  getPosts: [Post!]!
-}
-
-type Like {
+type LikeModel {
+  id: ID
   postId: String!
   userId: String!
 }
 
 type Mutation {
-  likePost(user_id: String!, post_id: String!): Post!
+  likePost(user_id: String!, post_id: String!): PostModel!
 }
 
-type Post {
-  id: Int!
-  description: String!
+type PostModel {
+  id: ID
+  description: String
   photoUrl: String!
-  likes: [Like!]!
+  likes: [LikeModel!]
 }
 
 type Query {
-  findAll: Post!
+  findAll: PostModel!
+}
+
+type UserModel {
+  id: ID
+  firstName: String
+  lastName: String
+  posts: [PostModel!]
+  getPosts: [PostModel!]!
 }

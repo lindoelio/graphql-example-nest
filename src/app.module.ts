@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 
 import { GraphQLModule } from '@nestjs/graphql';
-import { AuthorService } from './modules/author/author.service';
+
+import { UserService } from './modules/user/user.service';
 import { PostService } from './modules/post/post.service';
-import { AuthorResolver } from './modules/author/author.resolver';
+
+import { UserResolver } from './modules/user/user.resolver';
 import { PostResolver } from './modules/post/post.resolver';
 
 @Module({
@@ -14,11 +14,11 @@ import { PostResolver } from './modules/post/post.resolver';
       autoSchemaFile: './src/app.schema.gql'
     })
   ],
-  controllers: [AppController],
   providers: [
-    AppService,
     PostService,
-    AuthorService, AuthorResolver, PostResolver
+    UserService,
+    UserResolver,
+    PostResolver
   ],
 })
 export class AppModule {}

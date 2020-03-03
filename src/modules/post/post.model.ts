@@ -1,19 +1,19 @@
 
-import { Field, Int, ObjectType } from 'type-graphql';
-import { Like } from './like.model';
+import { Field, ObjectType, ID } from 'type-graphql';
+import { LikeModel } from './like.model';
 
 @ObjectType()
-export class Post {
+export class PostModel {
 
-  @Field(() => Int)
-  id: string;
+  @Field(() => ID, { nullable: true})
+  id?: string;
 
-  @Field()
-  description: string;
+  @Field({ nullable: true})
+  description?: string;
 
-  @Field()
+  @Field({ nullable: false})
   photoUrl: string;
 
-  @Field(() => [Like])
-  likes?: Like[];
+  @Field(() => [LikeModel], { nullable: true})
+  likes?: LikeModel[];
 }
