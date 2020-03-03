@@ -1,13 +1,22 @@
-import { Mutation, Args, Resolver, Query } from "@nestjs/graphql";
+import { Mutation, Args, Resolver, Query, Subscription } from "@nestjs/graphql";
+
+import { PubSub } from 'graphql-subscriptions';
+
 import { PostModel } from "./post.model";
 import { PostService } from "./post.service";
+import { PostInput } from "./post.input";
+import { PostTopic } from "./post.topic";
+import { LikeInput } from "./like.input";
+import { LikeModel } from "./like.model";
 
 @Resolver(() => PostModel)
 export class PostResolver {
 
-  constructor(
-    private readonly postService: PostService,
-  ) {}
+  private readonly pubSub: PubSub;
+
+  constructor(private readonly postService: PostService) {
+    this.pubSub = new PubSub();
+  }
 
   @Query(() => PostModel)
   async findAll(): Promise<PostModel[]> {
@@ -15,7 +24,41 @@ export class PostResolver {
   }
 
   @Mutation(() => PostModel)
-  async likePost(@Args('post_id') postId: string, @Args('user_id') userId: string) {
-    this.postService.addLike(postId, userId);
+  async createPost(@Args('input') input: PostInput): Promise<PostModel> {
+    const newPost: PostModel = {
+      imageUrl: input.imageUrl,
+      description: input.description,
+      userId: input.userId
+    }
+
+    this.postService.create(newPost).then(() => {
+      this.pubSub.publish(PostTopic.CREATED, newPost)
+    })
+
+    return newPost
+  }
+
+  @Mutation(() => LikeModel)
+  async likePost(@Args('input') input: LikeInput): Promise<LikeModel> {
+    const newLike: LikeModel = {
+      postId: input.postId,
+      userId: input.userId
+    }
+
+    this.postService.addLike(newLike).then(() => {
+      this.pubSub.publish(PostTopic.UPDATED, newLike)
+    })
+
+    return newLike
+  }
+
+  @Subscription(() => PostModel)
+  postCreated() {
+    return this.pubSub.asyncIterator(PostTopic.CREATED);
+  }
+
+  @Subscription(() => PostModel)
+  postUpdated() {
+    return this.pubSub.asyncIterator(PostTopic.UPDATED);
   }
 }

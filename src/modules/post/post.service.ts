@@ -19,13 +19,10 @@ export class PostService {
     return this.posts;
   }
 
-  async addLike(postId: string, userId: string): Promise<void> {
-    const like: LikeModel = {
-      id: null,
-      postId,
-      userId
-    };
+  async addLike(like: LikeModel): Promise<void> {
 
-    this.posts.find(post => post.id === postId).likes.push(like);
+    const likes: LikeModel[] = this.posts.find(post => post.id === like.postId).likes
+
+    this.posts.find(post => post.id === like.postId).likes.push(...likes, like);
   }
 }

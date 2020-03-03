@@ -7,8 +7,8 @@ export class PostInput {
   description: string;
 
   @Field()
-  photoUrl: string;
+  imageUrl: string;
 
   @Field()
-  authorId: string;
+  userId: string;
 }

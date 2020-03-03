@@ -11,7 +11,8 @@ import { PostResolver } from './modules/post/post.resolver';
 @Module({
   imports: [
     GraphQLModule.forRoot({
-      autoSchemaFile: './src/app.schema.gql'
+      autoSchemaFile: './src/app.schema.gql',
+      installSubscriptionHandlers: true
     })
   ],
   providers: [

@@ -12,7 +12,10 @@ export class PostModel {
   description?: string;
 
   @Field({ nullable: false})
-  photoUrl: string;
+  imageUrl: string;
+
+  @Field({ nullable: false})
+  userId: string;
 
   @Field(() => [LikeModel], { nullable: true})
   likes?: LikeModel[];

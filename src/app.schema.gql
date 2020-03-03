@@ -3,14 +3,25 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+input LikeInput {
+  postId: String!
+  userId: String!
+}
+
 type LikeModel {
-  id: ID
   postId: String!
   userId: String!
 }
 
 type Mutation {
-  likePost(user_id: String!, post_id: String!): PostModel!
+  createPost(input: PostInput!): PostModel!
+  likePost(input: LikeInput!): PostModel!
+}
+
+input PostInput {
+  description: String!
+  photoUrl: String!
+  authorId: String!
 }
 
 type PostModel {
@@ -22,6 +33,11 @@ type PostModel {
 
 type Query {
   findAll: PostModel!
+}
+
+type Subscription {
+  postCreated: PostModel!
+  postUpdated: PostModel!
 }
 
 type UserModel {

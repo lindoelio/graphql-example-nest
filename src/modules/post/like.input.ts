@@ -1,7 +1,7 @@
-import { Field, ObjectType } from "type-graphql";
+import { InputType, Field } from "type-graphql";
 
-@ObjectType()
-export class LikeModel {
+@InputType()
+export class LikeInput {
 
   @Field({ nullable: false })
   postId: string;
