@@ -11,12 +11,18 @@ export class PostModel {
   @Field({ nullable: true})
   description?: string;
 
-  @Field({ nullable: false})
+  @Field({ nullable: true})
   imageUrl?: string;
 
-  @Field({ nullable: false})
+  @Field({ nullable: true})
   userId?: string;
 
   @Field(() => [LikeModel], { nullable: true})
   likes?: LikeModel[];
+}
+
+@ObjectType()
+export class PostModelSubscribed {
+  @Field(() => PostModel, { nullable: true })
+  value?: PostModel
 }

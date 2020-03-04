@@ -1,6 +1,6 @@
 import { Mutation, Args, Resolver, Query, Subscription } from "@nestjs/graphql";
 
-import { PubSub } from 'graphql-subscriptions';
+import PubSub, { createFallThroughHandler, TransformStrategy } from 'graphql-firestore-subscriptions';
 
 import { PostModel } from "./post.model";
 import { PostService } from "./post.service";
@@ -8,6 +8,7 @@ import { PostInput } from "./post.input";
 import { PostTopic } from "./post.topic";
 import { LikeInput } from "./like.input";
 import { LikeModel } from "./like.model";
+import admin = require("firebase-admin");
 
 @Resolver(() => PostModel)
 export class PostResolver {
@@ -16,6 +17,24 @@ export class PostResolver {
 
   constructor(private readonly postService: PostService) {
     this.pubSub = new PubSub();
+
+    this.pubSub.registerHandler(PostTopic.CREATED, broadcast =>
+      admin.firestore().collection('posts').onSnapshot(snapshot => {
+        snapshot
+          .docChanges()
+          .filter(change => change.type === 'added')
+          .map(item => broadcast({ ...item.doc.data(), id: item.doc.id}));
+      })
+    );
+
+    this.pubSub.registerHandler(PostTopic.UPDATED, broadcast =>
+      admin.firestore().collection('posts').onSnapshot(snapshot => {
+        snapshot
+          .docChanges()
+          .filter(change => change.type === 'modified')
+          .map(item => broadcast({ ...item.doc.data(), id: item.doc.id}));
+      })
+    );
   }
 
   @Query(() => [PostModel])
@@ -40,8 +59,6 @@ export class PostResolver {
 
     const post: PostModel = await this.postService.create(newPost);
 
-    this.pubSub.publish(PostTopic.CREATED, post);
-
     return post;
   }
 
@@ -56,19 +73,25 @@ export class PostResolver {
 
     const like: LikeModel = await this.postService.addLike(newLike);
 
-    const post = await this.postService.getById(like.postId);
-
-    this.pubSub.publish(PostTopic.UPDATED, post);
-
-    return newLike;
+    return like;
   }
 
-  @Subscription(() => PostModel)
+  @Subscription(() => PostModel, {
+    resolve: (payload) => {
+      console.log(payload);
+      return payload;
+    }
+  })
   postCreated() {
     return this.pubSub.asyncIterator(PostTopic.CREATED);
   }
 
-  @Subscription(() => PostModel)
+  @Subscription(() => PostModel, {
+    resolve: (payload) => {
+      console.log(payload);
+      return payload;
+    }
+  })
   postUpdated() {
     return this.pubSub.asyncIterator(PostTopic.UPDATED);
   }

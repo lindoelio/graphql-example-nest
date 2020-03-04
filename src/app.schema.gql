@@ -9,8 +9,8 @@ input LikeInput {
 }
 
 type LikeModel {
-  postId: String!
-  userId: String!
+  postId: String
+  userId: String
 }
 
 type Mutation {
@@ -27,9 +27,13 @@ input PostInput {
 type PostModel {
   id: ID
   description: String
-  imageUrl: String!
-  userId: String!
+  imageUrl: String
+  userId: String
   likes: [LikeModel!]
+}
+
+type PostModelSubscribed {
+  value: PostModel
 }
 
 type Query {
