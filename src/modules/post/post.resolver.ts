@@ -19,8 +19,8 @@ export class PostResolver {
   }
 
   @Query(() => PostModel)
-  async findAll(): Promise<PostModel[]> {
-    return await this.postService.findAll();
+  async listPosts(): Promise<PostModel[]> {
+    return await this.postService.list();
   }
 
   @Mutation(() => PostModel)

@@ -19,9 +19,9 @@ type Mutation {
 }
 
 input PostInput {
-  description: String!
-  imageUrl: String!
-  userId: String!
+  description: String
+  imageUrl: String
+  userId: String
 }
 
 type PostModel {
@@ -33,7 +33,8 @@ type PostModel {
 }
 
 type Query {
-  findAll: PostModel!
+  findAll: UserModel!
+  listPosts: PostModel!
 }
 
 type Subscription {

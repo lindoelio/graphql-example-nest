@@ -2,15 +2,12 @@ import { Injectable } from "@nestjs/common";
 import { PostModel } from "./post.model";
 import { LikeModel } from "./like.model";
 import * as admin from "firebase-admin";
+import { PostInput } from "./post.input";
 
 @Injectable()
 export class PostService {
 
-  private readonly posts: PostModel[] = [];
-
   async create(post: PostModel): Promise<PostModel> {
-    this.posts.push(post);
-
     const { id } = await admin.firestore().collection('posts').add(post);
 
     post.id = id;
@@ -18,18 +15,37 @@ export class PostService {
     return post;
   }
 
-  async findAll(authorId?: string): Promise<PostModel[]> {
-    if (authorId) {
-      return this.posts.filter(post => post.id === authorId);
-    }
-
-    return this.posts;
+  async list(): Promise<PostModel[]> {
+    return this.find(null);
   }
 
-  async addLike(like: LikeModel): Promise<void> {
+  async find(post: PostInput): Promise<PostModel[]> {
+    console.log(post);
 
-    const likes: LikeModel[] = this.posts.find(post => post.id === like.postId).likes
+    const posts: PostModel[] = []
 
-    this.posts.find(post => post.id === like.postId).likes.push(...likes, like);
+    try {
+      const postsRef = admin.firestore().collection('posts');
+
+      const postDocs = await postsRef.get();
+      
+      postDocs.forEach(postDoc => {
+        const data = postDoc.data();
+
+        posts.push({
+          id: postDoc.id,
+          imageUrl: data['imageUrl'],
+          userId: data['userId']
+        });
+      });
+    } catch (error) {
+      console.log('Error getting posts', error);
+    } finally {
+      return posts;
+    }
+  }
+
+  async addLike(like: LikeModel): Promise<PostModel> {
+    return new PostModel()
   }
 }

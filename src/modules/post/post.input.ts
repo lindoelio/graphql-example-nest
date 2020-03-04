@@ -3,12 +3,12 @@ import { InputType, Field } from "type-graphql";
 @InputType()
 export class PostInput {
 
-  @Field()
-  description: string;
+  @Field({ nullable: true })
+  description?: string;
 
-  @Field()
-  imageUrl: string;
+  @Field({ nullable: true })
+  imageUrl?: string;
 
-  @Field()
-  userId: string;
+  @Field({ nullable: true })
+  userId?: string;
 }

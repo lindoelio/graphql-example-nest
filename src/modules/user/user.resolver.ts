@@ -18,7 +18,9 @@ export class UserResolver {
   }
 
   @ResolveProperty(() => [PostModel])
-  async getPosts(@Parent() author: UserModel): Promise<PostModel[]> {
-    return await this.postService.findAll(author.id);
+  async getPosts(@Parent() user: UserModel): Promise<PostModel[]> {
+    return await this.postService.find({
+      userId: user.id
+    });
   }
 }
