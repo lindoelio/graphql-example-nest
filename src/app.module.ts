@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { GraphQLModule } from '@nestjs/graphql';
 
@@ -13,7 +14,8 @@ import { PostResolver } from './modules/post/post.resolver';
     GraphQLModule.forRoot({
       autoSchemaFile: './src/app.schema.gql',
       installSubscriptionHandlers: true
-    })
+    }),
+    ConfigModule.forRoot({})
   ],
   providers: [
     PostService,

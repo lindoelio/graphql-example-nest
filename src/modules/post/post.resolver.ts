@@ -31,11 +31,11 @@ export class PostResolver {
       userId: input.userId
     }
 
-    this.postService.create(newPost).then(() => {
-      this.pubSub.publish(PostTopic.CREATED, newPost)
-    })
+    const post: PostModel = await this.postService.create(newPost);
 
-    return newPost
+    this.pubSub.publish(PostTopic.CREATED, post)
+
+    return post
   }
 
   @Mutation(() => LikeModel)

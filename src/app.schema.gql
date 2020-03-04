@@ -15,19 +15,20 @@ type LikeModel {
 
 type Mutation {
   createPost(input: PostInput!): PostModel!
-  likePost(input: LikeInput!): PostModel!
+  likePost(input: LikeInput!): LikeModel!
 }
 
 input PostInput {
   description: String!
-  photoUrl: String!
-  authorId: String!
+  imageUrl: String!
+  userId: String!
 }
 
 type PostModel {
   id: ID
   description: String
-  photoUrl: String!
+  imageUrl: String!
+  userId: String!
   likes: [LikeModel!]
 }
 
