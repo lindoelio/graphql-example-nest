@@ -34,7 +34,8 @@ type PostModel {
 
 type Query {
   findAll: UserModel!
-  listPosts: PostModel!
+  listPosts: [PostModel!]!
+  findPosts(userId: String!): [PostModel!]!
 }
 
 type Subscription {

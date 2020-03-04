@@ -18,38 +18,49 @@ export class PostResolver {
     this.pubSub = new PubSub();
   }
 
-  @Query(() => PostModel)
+  @Query(() => [PostModel])
   async listPosts(): Promise<PostModel[]> {
     return await this.postService.list();
   }
 
+  @Query(() => [PostModel])
+  async findPosts(@Args('userId') userId: string): Promise<PostModel[]> {
+    return await this.postService.find(userId);
+  }
+
   @Mutation(() => PostModel)
   async createPost(@Args('input') input: PostInput): Promise<PostModel> {
+    const { imageUrl, description, userId } = input;
+
     const newPost: PostModel = {
-      imageUrl: input.imageUrl,
-      description: input.description,
-      userId: input.userId
-    }
+      imageUrl,
+      description,
+      userId
+    };
 
     const post: PostModel = await this.postService.create(newPost);
 
-    this.pubSub.publish(PostTopic.CREATED, post)
+    this.pubSub.publish(PostTopic.CREATED, post);
 
-    return post
+    return post;
   }
 
   @Mutation(() => LikeModel)
   async likePost(@Args('input') input: LikeInput): Promise<LikeModel> {
+    const { postId, userId } = input;
+
     const newLike: LikeModel = {
-      postId: input.postId,
-      userId: input.userId
-    }
+      postId,
+      userId
+    };
 
-    this.postService.addLike(newLike).then(() => {
-      this.pubSub.publish(PostTopic.UPDATED, newLike)
-    })
+    const like: LikeModel = await this.postService.addLike(newLike);
 
-    return newLike
+    const post = await this.postService.getById(like.postId);
+
+    this.pubSub.publish(PostTopic.UPDATED, post);
+
+    return newLike;
   }
 
   @Subscription(() => PostModel)
