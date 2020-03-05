@@ -10,7 +10,7 @@ input LikeInput {
 
 type LikeModel {
   postId: String
-  userId: String
+  user: UserModel
 }
 
 type Mutation {
@@ -28,16 +28,12 @@ type PostModel {
   id: ID
   description: String
   imageUrl: String
-  userId: String
+  user: UserModel
   likes: [LikeModel!]
 }
 
-type PostModelSubscribed {
-  value: PostModel
-}
-
 type Query {
-  findAll: UserModel!
+  getUserById(id: String!): UserModel!
   listPosts: [PostModel!]!
   findPosts(userId: String!): [PostModel!]!
 }
@@ -49,8 +45,9 @@ type Subscription {
 
 type UserModel {
   id: ID
-  firstName: String
-  lastName: String
+  displayName: String
+  photoUrl: String
+  email: String
   posts: [PostModel!]
   getPosts: [PostModel!]!
 }

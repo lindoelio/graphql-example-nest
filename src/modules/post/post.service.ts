@@ -2,14 +2,18 @@ import { Injectable } from "@nestjs/common";
 import { PostModel } from "./post.model";
 import { LikeModel } from "./like.model";
 import * as admin from "firebase-admin";
+import { UserService } from "../user/user.service";
 
 @Injectable()
 export class PostService {
 
+  private readonly userService = new UserService();
   private readonly postsRef = admin.firestore().collection('posts');
 
   async create(post: PostModel): Promise<PostModel> {
     try {
+      post.user = await this.userService.getById(post.user.id);
+
       const { id } = await this.postsRef.add(post);
 
       return { ...post, id };
@@ -40,7 +44,7 @@ export class PostService {
     try {
       const posts: PostModel[] = []
 
-      const postDocs = await this.postsRef.where('userId', '==', userId).get()
+      const postDocs = await this.postsRef.where('user.id', '==', userId).get()
 
       postDocs.forEach(async postDoc => {
         const post: PostModel = postDoc.data() as PostModel;
@@ -68,6 +72,8 @@ export class PostService {
 
   async addLike(like: LikeModel): Promise<LikeModel> {
     try {
+      like.user = await this.userService.getById(like.user.id);
+
       await this.postsRef.doc(like.postId).update({
         likes: admin.firestore.FieldValue.arrayUnion(like)
       });

@@ -1,14 +1,15 @@
-import { Mutation, Args, Resolver, Query, Subscription } from "@nestjs/graphql";
+import { Args, Mutation, Query, Resolver, Subscription } from "@nestjs/graphql";
 
-import PubSub, { createFallThroughHandler, TransformStrategy } from 'graphql-firestore-subscriptions';
+import * as firebase from "firebase-admin";
 
-import { PostModel } from "./post.model";
-import { PostService } from "./post.service";
-import { PostInput } from "./post.input";
-import { PostTopic } from "./post.topic";
+import PubSub from 'graphql-firestore-subscriptions';
+
 import { LikeInput } from "./like.input";
 import { LikeModel } from "./like.model";
-import admin = require("firebase-admin");
+import { PostInput } from "./post.input";
+import { PostModel } from "./post.model";
+import { PostService } from "./post.service";
+import { PostTopic } from "./post.topic";
 
 @Resolver(() => PostModel)
 export class PostResolver {
@@ -19,7 +20,7 @@ export class PostResolver {
     this.pubSub = new PubSub();
 
     this.pubSub.registerHandler(PostTopic.CREATED, broadcast =>
-      admin.firestore().collection('posts').onSnapshot(snapshot => {
+      firebase.firestore().collection('posts').onSnapshot(snapshot => {
         snapshot
           .docChanges()
           .filter(change => change.type === 'added')
@@ -28,7 +29,7 @@ export class PostResolver {
     );
 
     this.pubSub.registerHandler(PostTopic.UPDATED, broadcast =>
-      admin.firestore().collection('posts').onSnapshot(snapshot => {
+      firebase.firestore().collection('posts').onSnapshot(snapshot => {
         snapshot
           .docChanges()
           .filter(change => change.type === 'modified')
@@ -54,7 +55,7 @@ export class PostResolver {
     const newPost: PostModel = {
       imageUrl,
       description,
-      userId
+      user: { id: userId }
     };
 
     const post: PostModel = await this.postService.create(newPost);
@@ -68,7 +69,7 @@ export class PostResolver {
 
     const newLike: LikeModel = {
       postId,
-      userId
+      user: { id: userId }
     };
 
     const like: LikeModel = await this.postService.addLike(newLike);
@@ -78,7 +79,6 @@ export class PostResolver {
 
   @Subscription(() => PostModel, {
     resolve: (payload) => {
-      console.log(payload);
       return payload;
     }
   })
@@ -88,7 +88,6 @@ export class PostResolver {
 
   @Subscription(() => PostModel, {
     resolve: (payload) => {
-      console.log(payload);
       return payload;
     }
   })

@@ -9,10 +9,13 @@ export class UserModel {
   id?: string;
 
   @Field({ nullable: true })
-  firstName?: string;
+  displayName?: string;
 
   @Field({ nullable: true })
-  lastName?: string;
+  photoUrl?: string;
+
+  @Field({ nullable: true })
+  email?: string;
 
   @Field(() => [PostModel], { nullable: true })
   posts?: PostModel[];

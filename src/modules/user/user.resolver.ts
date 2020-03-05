@@ -1,4 +1,4 @@
-import { Resolver, Query, ResolveProperty, Parent } from "@nestjs/graphql";
+import { Resolver, Query, ResolveProperty, Parent, Args } from "@nestjs/graphql";
 import { UserModel } from "./user.model";
 import { UserService } from "./user.service";
 import { PostService } from "../post/post.service";
@@ -13,8 +13,8 @@ export class UserResolver {
   ) {}
 
   @Query(() => UserModel)
-  async findAll(): Promise<UserModel[]> {
-    return await this.userService.findAll();
+  async getUserById(@Args('id') id: string): Promise<UserModel> {
+    return await this.userService.getById(id);
   }
 
   @ResolveProperty(() => [PostModel])

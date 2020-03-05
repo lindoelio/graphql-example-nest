@@ -1,4 +1,5 @@
 import { Field, ObjectType } from "type-graphql";
+import { UserModel } from "../user/user.model";
 
 @ObjectType()
 export class LikeModel {
@@ -6,6 +7,6 @@ export class LikeModel {
   @Field({ nullable: true })
   postId?: string;
 
-  @Field({ nullable: true })
-  userId?: string;
+  @Field(() => UserModel, { nullable: true })
+  user?: UserModel;
 }

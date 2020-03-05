@@ -1,16 +1,26 @@
 import { Injectable } from "@nestjs/common";
 import { UserModel } from "./user.model";
+import admin = require("firebase-admin");
 
 @Injectable()
 export class UserService {
 
-  private readonly authors: UserModel[] = [];
+  async getById(id: string): Promise<UserModel> {
+    try {
+      const { displayName, uid, email, photoURL } = await admin.auth().getUser(id);
 
-  async create(author: UserModel): Promise<void> {
-    this.authors.push(author);
-  }
+      return {
+        id: uid,
+        displayName,
+        email,
+        photoUrl: photoURL
+      };
+    } catch (error) {
+      if (error.code === "auth/user-not-found") {
+        return {};
+      }
 
-  async findAll(): Promise<UserModel[]> {
-    return this.authors;
+      throw error;
+    }
   }
 }

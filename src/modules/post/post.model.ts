@@ -1,6 +1,7 @@
 
 import { Field, ObjectType, ID } from 'type-graphql';
 import { LikeModel } from './like.model';
+import { UserModel } from '../user/user.model';
 
 @ObjectType()
 export class PostModel {
@@ -14,15 +15,9 @@ export class PostModel {
   @Field({ nullable: true})
   imageUrl?: string;
 
-  @Field({ nullable: true})
-  userId?: string;
+  @Field(() => UserModel, { nullable: true})
+  user?: UserModel;
 
   @Field(() => [LikeModel], { nullable: true})
   likes?: LikeModel[];
-}
-
-@ObjectType()
-export class PostModelSubscribed {
-  @Field(() => PostModel, { nullable: true })
-  value?: PostModel
 }
